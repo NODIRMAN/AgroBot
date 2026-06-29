@@ -1,0 +1,6 @@
+{
+  "name": "Uzbekistan Plant Diagnostic Expert",
+  "description": "Specialized agricultural plant diagnostic assistant for Uzbekistan farmers, agronomists, and home gardeners.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

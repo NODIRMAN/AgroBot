@@ -156,10 +156,34 @@ Provide the output in exactly this format (do not change any headers or wording,
         }
       }
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: contents,
-      });
+      // Try to generate content with fallback models to handle high demand or unavailable status
+      const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-3.5-flash"];
+      let response = null;
+      let lastError: any = null;
+
+      for (const modelName of modelsToTry) {
+        try {
+          console.log(`Attempting diagnosis using model: ${modelName}`);
+          response = await ai.models.generateContent({
+            model: modelName,
+            contents: contents,
+          });
+          if (response) {
+            console.log(`Successfully generated content using model: ${modelName}`);
+            break;
+          }
+        } catch (err: any) {
+          console.warn(`Model ${modelName} failed or unavailable:`, err.message || err);
+          lastError = err;
+        }
+      }
+
+      if (!response) {
+        throw new Error(
+          lastError?.message || 
+          "Сунъий интеллект моделлари банд ёки ишламаяпти. Илтимос, бир оз кутиб қайта уриниб кўринг. / Все модели ИИ сейчас перегружены. Пожалуйста, подождите немного и повторите попытку."
+        );
+      }
 
       const text = response.text || "Диагноз тайёрлаб бўлмади. / Не удалось сгенерировать диагноз.";
       res.json({ success: true, text });
